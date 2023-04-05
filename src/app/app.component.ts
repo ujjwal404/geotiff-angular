@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
 
   async loadimage() {
     // Load the GeoTIFF file from the assets folder
-    const response = await fetch('../assets/images/5.tiff');
+    const response = await fetch('../assets/images/2.tiff');
     const buffer = await response.arrayBuffer();
     const tiff = await GeoTIFF.fromArrayBuffer(buffer);
     // Get the first image from the TIFF file
@@ -43,7 +43,19 @@ export class AppComponent implements OnInit {
     const idata = ctx.createImageData(width, height);
 
     // Set the imagedata from the tiff
-    idata.data.set(data[0]);
+    // idata.data.set(data[0]);
+    const dataArr: any = data[0];
+    console.log(data[0]);
+
+    // convert float32 to uint8 and display grayscale image
+    for (let i = 0; i < dataArr.length; i++) {
+      const val = dataArr[i];
+      const scaledVal = Math.floor(val * 255);
+      idata.data[i * 4] = scaledVal;
+      idata.data[i * 4 + 1] = scaledVal;
+      idata.data[i * 4 + 2] = scaledVal;
+      idata.data[i * 4 + 3] = 255;
+    }
 
     // Draw the imagedata on the canvas
     ctx.putImageData(idata, 0, 0);
